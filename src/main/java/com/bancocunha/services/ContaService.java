@@ -32,13 +32,15 @@ public class ContaService {
                     if((paraConta.getSaldo() + valor) > ContaFacil.MAX_VALOR_CARTEIRA)
                         throw new SaldoMaximoAtingidoException();
                     deConta.setSaldo(deConta.getSaldo() - valor);
-                    paraConta.setSaldo(paraConta.getSaldo() + valor);                                
+                    paraConta.setSaldo(paraConta.getSaldo() + valor);  
+                    deConta.setTransferenciasNoMes(deConta.getTransferenciasNoMes() + 1);
                     deConta.getExtrato().push("TRANSFERENCIA " + valor);
                     paraConta.getExtrato().push("RECEBIDO DE TRANSFERENCIA " + valor);                                    
                 }
                 
         deConta.setSaldo(deConta.getSaldo() - valor);
         paraConta.setSaldo(paraConta.getSaldo() + valor);
+        deConta.setTransferenciasNoMes(deConta.getTransferenciasNoMes() + 1);
         deConta.getExtrato().push("TRANSFERENCIA " + valor);
         paraConta.getExtrato().push("RECEBIDO DE TRANSFERENCIA " + valor);
     }
@@ -63,6 +65,7 @@ public class ContaService {
         if (conta.getSaldo() < valor)
             throw new SaldoInsuficienteException();        
         conta.setSaldo(conta.getSaldo() - valor);
+        conta.setSaquesNoMes(conta.getSaquesNoMes() + 1);
         conta.getExtrato().push("SAQUE " + valor);       
     }
     
