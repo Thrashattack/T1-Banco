@@ -174,7 +174,7 @@ public class BancoCunha {
                     idConta = in.nextInt();
                     in.nextLine();
                     try {
-                        controlador.gerarExtratos(idAgencia, idConta);
+                        System.out.println(controlador.gerarExtratos(idAgencia, idConta));
                     } catch (RuntimeException e) {
                         System.out.println(e.getMessage());
                     }

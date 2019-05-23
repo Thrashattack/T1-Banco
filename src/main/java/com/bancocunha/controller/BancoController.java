@@ -32,6 +32,7 @@ public class BancoController {
     private final HashMap<Cliente, ArrayList<Conta>> mapaDeContasPorCliente;
     private final AgenciaOnline agenciaOnline;
     private boolean statusDone;
+    private String extrato;
 
     public BancoController(ArrayList<Agencia> agencias, ArrayList<Cliente> clientes,
             HashMap<Cliente, ArrayList<Conta>> mapaDeContasPorClientes, AgenciaOnline agenciaOnline) {
@@ -213,14 +214,14 @@ public class BancoController {
         }
     }
 
-    public void gerarExtratos(int idAgencia, int idConta) throws RuntimeException {
+    public String gerarExtratos(int idAgencia, int idConta) throws RuntimeException {
+        this.extrato = "";
         statusDone = false;
         this.agencias.forEach(agencia -> {
             if (agencia.getId() == idAgencia) {
                 agencia.getContas().forEach(conta -> {
                     if (conta.getId() == idConta) {
-                        System.out.println(ContaService.gerarExtrato(conta));
-                        statusDone = true;
+                        this.extrato =  ContaService.gerarExtrato(conta);
                     }
                 });
                 if (!statusDone) {
@@ -231,7 +232,7 @@ public class BancoController {
         if (!statusDone) {
             throw new AgenciaInvalidaException();
         }
-
+        return this.extrato;
     }
 
     public String gerarRelatorios(String tipo) {
