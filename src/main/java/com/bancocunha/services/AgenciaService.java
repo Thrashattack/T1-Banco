@@ -18,11 +18,13 @@ public class AgenciaService {
     public static void renderPoupanca(ContaPoupanca poupanca) {
         Double rendimento = poupanca.getRendimento() + (poupanca.getSaldo() * (ContaPoupanca.RENDIMENTO_AA / 12.00));
         poupanca.setRendimento(rendimento);
-        poupanca.getExtrato().push("RENDIMENTO " + rendimento);
+        poupanca.getExtrato().push("+ RENDIMENTO " + rendimento);
     }
 
     public static void atualizarDivida(ContaCorrente corrente) {
-        corrente.setSaldoDevedor(corrente.getSaldoDevedor() + (corrente.getSaldoDevedor() * ContaCorrente.JUROS_EMPRESTIMO_AM));
+        Double juros = (corrente.getSaldoDevedor() * ContaCorrente.JUROS_EMPRESTIMO_AM);
+        corrente.setSaldoDevedor(corrente.getSaldoDevedor() + juros);
+        corrente.getExtrato().push("- JUROS DE EMPRESTIMO " + juros);
     }
 
     public static Conta abrirConta(Agencia agencia, Cliente cliente, Double valorInicial, String tipo) {

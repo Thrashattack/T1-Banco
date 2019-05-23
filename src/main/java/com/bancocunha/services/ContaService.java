@@ -37,28 +37,24 @@ public class ContaService {
             deConta.setSaldo(deConta.getSaldo() - valor);
             paraConta.setSaldo(paraConta.getSaldo() + valor);
             deConta.setTransferenciasNoMes(deConta.getTransferenciasNoMes() + 1);
-            deConta.getExtrato().push("TRANSFERENCIA EFETUADA " + valor);
-            paraConta.getExtrato().push("RECEBIDO DE TRANSFERENCIA " + valor);
+            deConta.getExtrato().push("- TRANSFERENCIA EFETUADA " + valor);
+            paraConta.getExtrato().push("+ RECEBIDO DE TRANSFERENCIA " + valor);
         }
 
         deConta.setSaldo(deConta.getSaldo() - valor);
         paraConta.setSaldo(paraConta.getSaldo() + valor);
         deConta.setTransferenciasNoMes(deConta.getTransferenciasNoMes() + 1);
-        deConta.getExtrato().push("TRANSFERENCIA EFETUADA " + valor);
-        paraConta.getExtrato().push("RECEBIDO DE TRANSFERENCIA " + valor);
+        deConta.getExtrato().push("- TRANSFERENCIA EFETUADA " + valor);
+        paraConta.getExtrato().push("+ RECEBIDO DE TRANSFERENCIA " + valor);
     }
 
     public static void depositar(Conta conta, Double valor) throws RuntimeException {
-        if (conta instanceof ContaFacil) {
-            if ((conta.getSaldo() + valor) > ContaFacil.MAX_VALOR_CARTEIRA) {
-                throw new SaldoMaximoAtingidoException();
-            }
-            conta.setSaldo(conta.getSaldo() + valor);
-            conta.getExtrato().push("DEPOSITO " + valor);
-        }
-
+        if (conta instanceof ContaFacil && (conta.getSaldo() + valor) > ContaFacil.MAX_VALOR_CARTEIRA)
+            throw new SaldoMaximoAtingidoException();
+            
         conta.setSaldo(conta.getSaldo() + valor);
-        conta.getExtrato().push("DEPOSITO " + valor);
+        conta.getExtrato().push("+ DEPOSITO " + valor);
+            
     }
 
     public static void sacar(Conta conta, Double valor) throws RuntimeException {
@@ -73,7 +69,7 @@ public class ContaService {
         }
         conta.setSaldo(conta.getSaldo() - valor);
         conta.setSaquesNoMes(conta.getSaquesNoMes() + 1);
-        conta.getExtrato().push("SAQUE " + valor);
+        conta.getExtrato().push("- SAQUE " + valor);
     }
 
     public static void emprestimo(ContaCorrente conta, Double valor) throws RuntimeException {
@@ -88,7 +84,7 @@ public class ContaService {
         }
 
         conta.setSaldoDevedor(valor);
-        conta.getExtrato().push("EMPRESTIMO " + valor);
+        conta.getExtrato().push("- EMPRESTIMO " + valor);
     }
 
     public static void pagarEmprestimo(ContaCorrente conta, Double valor) throws RuntimeException {
@@ -100,7 +96,7 @@ public class ContaService {
         }
 
         conta.setSaldoDevedor(conta.getSaldoDevedor() - valor);
-        conta.getExtrato().push("PAGAMENTO EMPRESTIMO " + valor);
+        conta.getExtrato().push("+ PAGAMENTO EMPRESTIMO " + valor);
     }
 
     public static String gerarExtrato(Conta conta) {
