@@ -13,23 +13,22 @@ import lombok.Setter;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 @Getter
 @Setter
 public class Agencia {
+
     private String endereco;
     private String nome;
     private final int id;
     private final List<Conta> contas;
-    
+
     public Agencia(int id, String addr, String nome) {
         this.endereco = addr;
         this.id = id;
         this.nome = nome;
         this.contas = new ArrayList<>();
     }
-    
-   
-    
+
 }

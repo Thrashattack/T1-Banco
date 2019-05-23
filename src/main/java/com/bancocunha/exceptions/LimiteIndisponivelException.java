@@ -7,7 +7,7 @@ package com.bancocunha.exceptions;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 public class LimiteIndisponivelException extends RuntimeException {
     public LimiteIndisponivelException() {

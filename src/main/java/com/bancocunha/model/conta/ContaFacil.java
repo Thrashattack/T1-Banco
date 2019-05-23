@@ -11,25 +11,27 @@ import lombok.Setter;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 @Getter
 @Setter
-public class ContaFacil extends Conta{
+public class ContaFacil extends Conta {
+
     public static final Double MAX_VALOR_CARTEIRA = 5000.00;
     private static final Integer MAX_SAQUES = 1, MAX_TRANS = 1;
     private static final Double ANUIDADE = 10.00;
     private final int value;
+
     public ContaFacil(Double valorInicial, Cliente cliente) {
         super(valorInicial, MAX_SAQUES, MAX_TRANS, ANUIDADE, cliente);
         this.value = 0;
     }
-    
+
     @Override
     public Double getSaldoDevedor() {
         return 0.0;
     }
-    
+
     @Override
     public int getValue() {
         return this.value;

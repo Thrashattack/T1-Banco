@@ -7,7 +7,7 @@ package com.bancocunha.exceptions;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 public class OperacaoNaoPermitidaException extends RuntimeException {
     public OperacaoNaoPermitidaException() {

@@ -7,7 +7,7 @@ package com.bancocunha.exceptions;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 public class SaldoDevedorException  extends RuntimeException  {
     public SaldoDevedorException() {

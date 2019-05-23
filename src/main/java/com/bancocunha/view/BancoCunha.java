@@ -1,7 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Modulo principal de visualizacao e de consumo da API do banco.
+ * Insntancia estaticamente em memória a lista de agencias, a agencia online,
+ * os clientes e um mapa de cliente para lista de contas  
  */
 package com.bancocunha.view;
 
@@ -17,34 +17,36 @@ import java.util.Scanner;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 public class BancoCunha {
+
     private static ArrayList<Agencia> agencias;
     private static AgenciaOnline agenciaOnline;
     private static ArrayList<Cliente> clientes;
     private static HashMap<Cliente, ArrayList<Conta>> mapaDeContasPorCliente;
-    
-    
-    public static void main(String [] args) {
-         //------------------------------------------|
-        BancoCunha.agencias = new ArrayList<>();             //|//
+
+    public static void main(String[] args) {
+        //-----------------------------------------------------|
+        BancoCunha.agencias = new ArrayList<>();             //|// E possivel transferir para o construtor ou mesmo persistir como entidade
         BancoCunha.clientes = new ArrayList<>();             //|//                   
         BancoCunha.mapaDeContasPorCliente = new HashMap<>(); //|//
         BancoCunha.agenciaOnline = new AgenciaOnline();      //|//
-        BancoCunha.agencias.add(agenciaOnline);        //|//
-        //----------------------------------------//|//
+        BancoCunha.agencias.add(agenciaOnline);              //|//
+        //---------------------------------------------------//|//
         
+        //Controller da api
         BancoController controlador = new BancoController(agencias, clientes, mapaDeContasPorCliente, agenciaOnline);
-        
-        Scanner in =  new Scanner(System.in);
+
+        Scanner in = new Scanner(System.in);
         int evento = in.nextInt();
         in.nextLine();
         String nome, pais, cidade, rua, bairro, cep, numCasa, endereco;
         int idAgencia, idConta;
         Double valor;
-        for(;;) {
-            switch(evento) {
+        
+        for (;;) {            
+            switch (evento) {
                 case 1:
                     controlador.viradaDoMes();
                     System.out.println("Virada do mes concluida!");
@@ -78,31 +80,32 @@ public class BancoCunha {
                     String tipoCliente = in.nextLine();
                     int agencia = in.nextInt();
                     in.nextLine();
-                    Double valorInicial = in.nextDouble(); 
+                    Double valorInicial = in.nextDouble();
                     in.nextLine();
                     try {
-                       controlador.aberturaDeConta(nome, endereco, tipoConta, cpf, data, tipoCliente, agencia, valorInicial);
-                       System.out.println("Conta aberta com sucesso");
+                        controlador.aberturaDeConta(nome, endereco, tipoConta, cpf, data, tipoCliente, agencia, valorInicial);
+                        System.out.println("Conta aberta com sucesso");
                     } catch (RuntimeException e) {
                         System.out.println(e.getMessage());
                     }
 
                     break;
-                case 4:     
+                case 4:
                     idAgencia = in.nextInt();
                     idConta = in.nextInt();
                     in.nextLine();
                     valor = in.nextDouble();
-                    in.nextLine();                    
+                    in.nextLine();
                     try {
-                       controlador.saque(idAgencia, idConta, valor);                   
-                       System.out.println("Saque Realizado. \nValor: " + valor);
-                    } catch(SaldoInsuficienteException e) { 
+                        controlador.saque(idAgencia, idConta, valor);
+                        System.out.println("Saque Realizado. \nValor: " + valor);
+                    } catch (RuntimeException e) {
                         System.out.println(e.getMessage());
-                            if(e instanceof SaldoInsuficienteException) {
+                        if (e instanceof SaldoInsuficienteException) {
                             Double novoValor = in.nextDouble();
-                                if(novoValor == -1.0)
-                                    return;
+                            if (novoValor == -1.0) {
+                                return;
+                            }
                             controlador.saque(idAgencia, idConta, novoValor);
                             System.out.println("Saque Realizado. \nValor: " + valor);
                         }
@@ -139,13 +142,14 @@ public class BancoCunha {
                         System.out.println("Transferencia Realizada!\nValor: " + valor);
                     } catch (RuntimeException e) {
                         System.out.println(e.getMessage());
-                        if(e instanceof SaldoInsuficienteException) {
+                        if (e instanceof SaldoInsuficienteException) {
                             Double novoValor = in.nextDouble();
-                            if(novoValor == -1.0)
+                            if (novoValor == -1.0) {
                                 return;
+                            }
                             controlador.transferencia(idAgenciaDe, idAgenciaPara, idContaDe, idContaPara, novoValor);
                             System.out.println("Transferencia Realizada!\nValor: " + valor);
-                        }                    
+                        }
                     }
 
                     break;
@@ -171,11 +175,12 @@ public class BancoCunha {
                     in.nextLine();
                     try {
                         controlador.gerarExtratos(idAgencia, idConta);
-                    } catch(RuntimeException e) {
-                        System.out.println(e.getMessage());                }
+                    } catch (RuntimeException e) {
+                        System.out.println(e.getMessage());
+                    }
 
                     break;
-                case 9:                
+                case 9:
                     String tipo = in.nextLine();
                     System.out.println(controlador.gerarRelatorios(tipo));
                     break;
@@ -185,6 +190,5 @@ public class BancoCunha {
             in.nextLine();
         }
     }
-        
-}
 
+}

@@ -5,7 +5,6 @@
  */
 package com.bancocunha.controller;
 
-
 import com.bancocunha.exceptions.AgenciaInvalidaException;
 import com.bancocunha.exceptions.ContaInvalidaException;
 import com.bancocunha.model.agencia.Agencia;
@@ -24,14 +23,15 @@ import java.util.HashMap;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 public class BancoController {
+
     private final ArrayList<Agencia> agencias;
     private final ArrayList<Cliente> clientes;
     private final HashMap<Cliente, ArrayList<Conta>> mapaDeContasPorCliente;
     private final AgenciaOnline agenciaOnline;
-    private boolean tempStatusDone;
+    private boolean statusDone;
     
     public BancoController(ArrayList<Agencia> agencias, ArrayList<Cliente> clientes,
             HashMap<Cliente, ArrayList<Conta>> mapaDeContasPorClientes, AgenciaOnline agenciaOnline) {
@@ -41,6 +41,7 @@ public class BancoController {
         this.agenciaOnline = agenciaOnline;
         
     }
+
     public void cadastrarAgencia(String nome, int id, String endereco) {
         this.agencias.add(new Agencia(id, endereco, nome));        
     }
@@ -48,27 +49,32 @@ public class BancoController {
     public void viradaDoMes() {
         this.agencias.forEach(agencia -> {
             agencia.getContas().forEach(conta -> {
-                if(conta instanceof ContaPoupanca)
+                if (conta instanceof ContaPoupanca) {
                     AgenciaService.renderPoupanca((ContaPoupanca) conta);
-                if(conta instanceof ContaCorrente)
+                }
+                if (conta instanceof ContaCorrente) {
                     AgenciaService.atualizarDivida((ContaCorrente) conta);
+                }
+                conta.setSaquesNoMes(0);
+                conta.setTransferenciasNoMes(0);
             });
         });
     }
     
     public void aberturaDeConta(String nome, String endereco, String tipoConta,
             String cpf, String data, String tipoCliente, int agencia, Double valorInicial) throws RuntimeException {
-        tempStatusDone = false;
-        this.clientes.forEach( cliente -> {
-            if(cliente.getCpf().equals(cpf)) {
+        statusDone = false;
+        this.clientes.forEach(cliente -> {
+            if (cliente.getCpf().equals(cpf)) {
                 cliente.setNome(nome);
                 cliente.setEndereco(endereco);
                 cliente.setDataDeNascimento(data);
-                if (tipoCliente.equals("TRADICIONAL"))
-                     cliente.setAnuidade(ClienteTradicional.ANUIDADE);
-                else if (tipoCliente.equals("PREMIUM"))
-                     cliente.setAnuidade(ClientePremium.ANUIDADE);                
-                if(tipoConta.equals("F")) {                    
+                if (tipoCliente.equals("TRADICIONAL")) {
+                    cliente.setAnuidade(ClienteTradicional.ANUIDADE);
+                } else if (tipoCliente.equals("PREMIUM")) {
+                    cliente.setAnuidade(ClientePremium.ANUIDADE);
+                }                
+                if (tipoConta.equals("F")) {                    
                     this.mapaDeContasPorCliente.get(cliente).add(AgenciaService.abrirConta(this.agenciaOnline, cliente, valorInicial, tipoConta)
                     );
                     return;
@@ -76,22 +82,24 @@ public class BancoController {
                 this.agencias.forEach(agenciaAtual -> {
                     System.out.println("Agencia atual:" + agenciaAtual.getId());
                     System.out.println("Agencia recebida:" + agencia);
-                    if(agenciaAtual.getId() == agencia) {
+                    if (agenciaAtual.getId() == agencia) {
                         Conta conta = AgenciaService.abrirConta(agenciaAtual, cliente, valorInicial, tipoConta);
-                        this.mapaDeContasPorCliente.get(cliente).add(conta);  
-                        tempStatusDone = true;
+                        this.mapaDeContasPorCliente.get(cliente).add(conta);                        
+                        statusDone = true;
                     }
                 }); // Agencia nao encontrada
-                if(!tempStatusDone)
-                   throw new AgenciaInvalidaException();
-            }                
+                if (!statusDone) {
+                    throw new AgenciaInvalidaException();
+                }
+            }            
         }); // cpf nao encontrado
         Cliente cliente;
-        if(tipoCliente.equals("PREMIUM")) 
+        if (tipoCliente.equals("PREMIUM")) {
             cliente = new ClientePremium(nome, cpf, data, endereco);
-        else
+        } else {
             cliente = new ClienteTradicional(nome, cpf, data, endereco);
-            
+        }
+        
         this.mapaDeContasPorCliente.put(cliente, new ArrayList<>());
         if (tipoConta.equals("F")) {
             this.mapaDeContasPorCliente.get(cliente).add(AgenciaService.abrirConta(this.agenciaOnline, cliente, valorInicial, tipoConta)
@@ -99,115 +107,140 @@ public class BancoController {
             return;
         }
         this.agencias.forEach(agenciaAtual -> {
-            if(agenciaAtual.getId() == agencia) {
+            if (agenciaAtual.getId() == agencia) {
                 Conta conta = AgenciaService.abrirConta(agenciaAtual, cliente, valorInicial, tipoConta);
                 this.mapaDeContasPorCliente.get(cliente).add(conta);
-                tempStatusDone = true;
+                statusDone = true;
             }
         }); // Agencia nao encontrada
-        if(!tempStatusDone)
-           throw new AgenciaInvalidaException();
+        if (!statusDone) {
+            throw new AgenciaInvalidaException();
+        }
         
     }
     
-    public void saque(int idAgencia, int idConta, Double valor) throws RuntimeException {   
-        tempStatusDone = false;
+    public void saque(int idAgencia, int idConta, Double valor) throws RuntimeException {        
+        statusDone = false;
         this.agencias.forEach(agencia -> {
-            if(agencia.getId() == idAgencia) {
+            if (agencia.getId() == idAgencia) {
                 agencia.getContas().forEach(conta -> {
-                    if(conta.getId() == idConta) {                         
-                        ContaService.sacar(conta, valor);  
-                        tempStatusDone = true;
+                    if (conta.getId() == idConta) {                        
+                        ContaService.sacar(conta, valor);                        
+                        statusDone = true;
                     }
                 });                
-                if(!tempStatusDone)throw new ContaInvalidaException();  
-            }         
+                if (!statusDone) {
+                    throw new ContaInvalidaException();
+                }                
+            }            
         });
-        if(!tempStatusDone) throw new AgenciaInvalidaException();
+        if (!statusDone) {
+            throw new AgenciaInvalidaException();
+        }
     }
     
-    public void depositoEmConta(int idAgencia, int idConta, Double valor) throws RuntimeException {     
-        tempStatusDone = false;
+    public void depositoEmConta(int idAgencia, int idConta, Double valor) throws RuntimeException {        
+        statusDone = false;
         this.agencias.forEach(agencia -> {
-            if(agencia.getId() == idAgencia) {
+            if (agencia.getId() == idAgencia) {
                 agencia.getContas().forEach(conta -> {
-                    if(conta.getId() == idConta){                       
-                        ContaService.depositar(conta, valor);   
-                        tempStatusDone = true;
+                    if (conta.getId() == idConta) {                        
+                        ContaService.depositar(conta, valor);                        
+                        statusDone = true;
                     }
                 });
-                if(!tempStatusDone) throw new ContaInvalidaException();
-            }           
+                if (!statusDone) {
+                    throw new ContaInvalidaException();
+                }
+            }            
         });
-        if(!tempStatusDone) throw new AgenciaInvalidaException();
+        if (!statusDone) {
+            throw new AgenciaInvalidaException();
+        }
     }
     
     public void transferencia(int idAgenciaDe, int idAgenciaPara,
             int idContaDe, int idContaPara, Double valor) throws RuntimeException {        
-        tempStatusDone = false;
+        statusDone = false;
         this.agencias.forEach(agenciaDe -> {
-            if(agenciaDe.getId() == idAgenciaDe) {
+            if (agenciaDe.getId() == idAgenciaDe) {
                 agenciaDe.getContas().forEach(contaDe -> {
-                    if(contaDe.getId() == idContaDe) {
+                    if (contaDe.getId() == idContaDe) {
                         this.agencias.forEach(agenciaPara -> {
-                            if(agenciaPara.getId() == idAgenciaPara) {
+                            if (agenciaPara.getId() == idAgenciaPara) {
                                 agenciaPara.getContas().forEach(contaPara -> {
-                                    if(contaPara.getId() == idContaPara) {                             
+                                    if (contaPara.getId() == idContaPara) {                                        
                                         ContaService.transferir(contaDe, contaPara, valor);
-                                        tempStatusDone = true;
+                                        statusDone = true;
                                     }
                                 });
-                                if(!tempStatusDone) throw new RuntimeException("Conta de Destino Invalida\n");                        
+                                if (!statusDone) {
+                                    throw new RuntimeException("Conta de Destino Invalida\n");
+                                }                                
                             }
                         });
-                        if(!tempStatusDone) throw new RuntimeException("Agencia de destino invalida!\n");
+                        if (!statusDone) {
+                            throw new RuntimeException("Agencia de destino invalida!\n");
+                        }
                     }
-                });  
-               if(!tempStatusDone) throw new RuntimeException("Conta de origem invalida!\n");
+                });                
+                if (!statusDone) {
+                    throw new RuntimeException("Conta de origem invalida!\n");
+                }
             }
-        }); 
-       if(!tempStatusDone) throw new RuntimeException("Agencia de origem invalida!\n");        
+        });        
+        if (!statusDone) {
+            throw new RuntimeException("Agencia de origem invalida!\n");
+        }        
         
     }
     
-    public void solicitarEmprestimo(int idAgencia, int idConta, Double valor) throws RuntimeException { 
-        tempStatusDone = false;
+    public void solicitarEmprestimo(int idAgencia, int idConta, Double valor) throws RuntimeException {        
+        statusDone = false;
         this.agencias.forEach(agencia -> {
-            if(agencia.getId() == idAgencia) {
+            if (agencia.getId() == idAgencia) {
                 agencia.getContas().forEach(conta -> {
-                    if(conta.getId() == idConta) { 
-                       ContaService.emprestimo((ContaCorrente) conta, valor);
-                       tempStatusDone = true;
+                    if (conta.getId() == idConta) {                        
+                        ContaService.emprestimo((ContaCorrente) conta, valor);
+                        statusDone = true;
                     }
                 });
-            if(!tempStatusDone) throw new ContaInvalidaException();
+                if (!statusDone) {
+                    throw new ContaInvalidaException();
+                }
             }            
         });
-        if(!tempStatusDone) throw new AgenciaInvalidaException();
+        if (!statusDone) {
+            throw new AgenciaInvalidaException();
+        }
     }
     
     public void gerarExtratos(int idAgencia, int idConta) throws RuntimeException {
-        tempStatusDone = false;
+        statusDone = false;
         this.agencias.forEach(agencia -> {
-            if(agencia.getId()  == idAgencia) {
+            if (agencia.getId() == idAgencia) {
                 agencia.getContas().forEach(conta -> {
-                    if(conta.getId() == idConta) { 
+                    if (conta.getId() == idConta) {                        
                         System.out.println(ContaService.gerarExtrato(conta));
-                        tempStatusDone = true;
+                        statusDone = true;
                     }
                 });
-            if(!tempStatusDone) throw new ContaInvalidaException();    
+                if (!statusDone) {
+                    throw new ContaInvalidaException();
+                }                
             }            
         });
-        if(!tempStatusDone) throw new AgenciaInvalidaException();
+        if (!statusDone) {
+            throw new AgenciaInvalidaException();
+        }
         
     }
     
     public String gerarRelatorios(String tipo) {
-        switch(tipo) {            
+        switch (tipo) {            
             case "A":
-                return RelatoriosService.listar_por_agencia_e_numero_da_conta(this.agencias);                
-            case "B":   
+                return RelatoriosService.listar_por_agencia_e_numero_da_conta(this.agencias);            
+            case "B":                
                 return RelatoriosService.listar_por_nome_do_cliente_e_tipo_da_conta(this.mapaDeContasPorCliente, this.agencias);
             case "C":
                 return RelatoriosService.listar_poupancas(this.agencias);
@@ -220,7 +253,7 @@ public class BancoController {
             case "G":
                 return RelatoriosService.listar_clientes(this.mapaDeContasPorCliente);
             default:
-                return "Tipo Incorreto";                
+                return "Tipo Incorreto";            
         }        
         
     }

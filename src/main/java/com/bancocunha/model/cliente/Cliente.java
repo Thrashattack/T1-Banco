@@ -11,20 +11,21 @@ import lombok.Setter;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 @Getter
 @Setter
 @AllArgsConstructor
 public abstract class Cliente {
+
     private Double anuidade;
     private String nome;
     private String cpf;
     private String endereco;
     private String dataDeNascimento;
-    
+
     @Override
     public String toString() {
-        return this.nome +"\n"+ this.cpf +"\n"+ this.dataDeNascimento +"\n";
+        return this.nome + "\n" + this.cpf + "\n" + this.dataDeNascimento + "\n";
     }
 }

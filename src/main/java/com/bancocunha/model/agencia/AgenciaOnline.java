@@ -10,12 +10,12 @@ import lombok.Setter;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 @Getter
 @Setter
-public class AgenciaOnline extends Agencia{
-    
+public class AgenciaOnline extends Agencia {
+
     public AgenciaOnline() {
         super(2222, "", "Agencia Online");
     }

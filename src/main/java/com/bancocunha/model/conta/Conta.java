@@ -11,13 +11,13 @@ import lombok.Setter;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 @Getter
 @Setter
 public abstract class Conta {
-    
-    private static int ID = 0001;
+
+    private static int ID = 1;
     private final int id;
     private Double saldo;
     private final Integer limiteDeTransferencia;
@@ -27,22 +27,21 @@ public abstract class Conta {
     private Integer saquesNoMes;
     private Cliente titular;
     private Extrato extrato;
-    
-    
-    
+
     public Conta(Double saldoInicial, Integer limiteT, Integer limiteS, Double taxa, Cliente titular) {
         this.id = Conta.ID++;
         this.saldo = saldoInicial;
         this.limiteDeTransferencia = limiteT;
         this.limiteDeSaque = limiteS;
-        this. taxa = taxa;
-        this. titular = titular;
+        this.taxa = taxa;
+        this.titular = titular;
         this.extrato = new Extrato(this);
         this.transferenciasNoMes = 0;
         this.saquesNoMes = 0;
     }
-    
+
     public abstract Double getSaldoDevedor();
+
     public abstract int getValue();
-    
+
 }

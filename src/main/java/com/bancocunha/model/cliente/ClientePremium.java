@@ -10,12 +10,14 @@ import lombok.Setter;
 
 /**
  *
- * @author Unknow
+ * @author Carlos Cunha
  */
 @Getter
 @Setter
-public class ClientePremium extends Cliente{
+public class ClientePremium extends Cliente {
+
     public static final Double ANUIDADE = 0.0;
+
     public ClientePremium(String nome, String cpf, String data, String endereco) {
         super(ANUIDADE, nome, cpf, endereco, data);
     }
