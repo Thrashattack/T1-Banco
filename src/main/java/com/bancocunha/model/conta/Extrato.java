@@ -31,13 +31,12 @@ public class Extrato {
     @Override
     public String toString() {
         String result = "";
-        this.cacheDeOp.stream()
+        result += this.cacheDeOp.stream()
                 .map((operacao) -> operacao + "\n")
                 .reduce(result, String::concat);
-        String saida = "#Saida\n" + result + "\nSALDO ATUAL " + conta.getSaldo();
+        result = "#Saida\n" + result + "\nSALDO ATUAL " + conta.getSaldo();
         if (conta instanceof ContaCorrente) 
-            saida += "\nSALDO DEVEDOR " + conta.getSaldoDevedor();
-        
-        return saida;
+            result += "\nSALDO DEVEDOR " + conta.getSaldoDevedor();        
+        return result;
     }
 }

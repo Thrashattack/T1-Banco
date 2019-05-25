@@ -48,7 +48,7 @@ public class RelatoriosService {
             });
         });
         agencias.forEach(agencia -> {
-            agencia.getContas()
+            resultado += agencia.getContas()
                     .stream()
                     .map((conta) -> new ContaDTO(agencia, conta).toString() + "\n")
                     .reduce(resultado, String::concat); // reduz atraves de concat para o resultado
@@ -79,7 +79,7 @@ public class RelatoriosService {
             }
         }
         agencias.forEach(agencia -> {
-            agencia.getContas()
+             resultado += agencia.getContas()
                     .stream() 
                     .map((conta) -> new ContaDTO(agencia, conta).toString() + "\n") 
                     .reduce(resultado, String::concat); 
@@ -90,7 +90,7 @@ public class RelatoriosService {
     public static String listar_poupancas(ArrayList<Agencia> agencias) {
         resultado = "";
         agencias.forEach(agencia -> {
-            agencia.getContas()
+             resultado += agencia.getContas()
                     .stream()
                     .filter(conta -> conta instanceof ContaPoupanca)
                     .map(conta -> new ContaDTO(agencia, conta).toString() + "\n")
@@ -102,7 +102,7 @@ public class RelatoriosService {
     public static String listar_correntes(ArrayList<Agencia> agencias) {
         resultado = "";
         agencias.forEach(agencia -> {
-            agencia.getContas()
+             resultado += agencia.getContas()
                     .stream()
                     .filter(conta -> conta instanceof ContaCorrente)
                     .map(conta -> new ContaDTO(agencia, conta).toString() + "\n")
@@ -114,7 +114,7 @@ public class RelatoriosService {
     public static String listar_faceis(ArrayList<Agencia> agencias) {
         resultado = "";
         agencias.forEach(agencia -> {
-            agencia.getContas()
+             resultado += agencia.getContas()
                     .stream()
                     .filter(conta -> conta instanceof ContaFacil)
                     .map(conta -> new ContaDTO(agencia, conta).toString() + "\n")
@@ -125,7 +125,7 @@ public class RelatoriosService {
 
     public static String listar_clientes_com_varias_contas(HashMap<Cliente, ArrayList<Conta>> mapaDeContasPorCliente) {
         resultado = "";
-        mapaDeContasPorCliente.entrySet()
+         resultado += mapaDeContasPorCliente.entrySet()
                 .stream()
                 .filter(node -> node.getValue().size() > 1)
                 .map(node -> node.getKey().toString() + "\n")
@@ -141,7 +141,7 @@ public class RelatoriosService {
             Cliente cliente2 = (Cliente) clienteB;
             return cliente1.getNome().compareTo(cliente2.getNome());
         });
-        mapaDeContasPorCliente.entrySet()
+         resultado += mapaDeContasPorCliente.entrySet()
                 .stream()
                 .map(node -> node.getKey().toString())
                 .reduce(resultado, String::concat);        

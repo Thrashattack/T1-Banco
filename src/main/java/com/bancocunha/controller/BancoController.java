@@ -222,6 +222,7 @@ public class BancoController {
                 agencia.getContas().forEach(conta -> {
                     if (conta.getId() == idConta) {
                         this.extrato =  ContaService.gerarExtrato(conta);
+                        statusDone = true;
                     }
                 });
                 if (!statusDone) {
